@@ -6,7 +6,7 @@
     <br>
     Easy!Appointments
     <br>
-    Fork for <a href="https://openouthair.com>Open Out</a> by <a href="https://codev.uk">Codev</a>
+    Fork for <a href="https://openouthair.com">Open Out</a> by <a href="https://codev.uk">Codev</a>
 </h1>
 
 <h4 align="center">
