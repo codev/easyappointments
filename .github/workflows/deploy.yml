@@ -12,7 +12,11 @@ jobs:
       - name: Install Cloudron CLI
         run: npm i -g cloudron
 
+      # script(1) gives the CLI a pty: its error messages are otherwise lost
+      # (it process.exit()s before piped stdout flushes)
       - name: Run deploy script
         env:
           CLOUDRON_CLI_AUTH_TOKEN: ${{ secrets.CLOUDRON_TOKEN }}
-        run: cloudron --server "${{ secrets.CLOUDRON_SERVER }}" exec --app "${{ secrets.CLOUDRON_APP }}" -- /app/data/deploy.sh
+          CLOUDRON_SERVER: ${{ secrets.CLOUDRON_SERVER }}
+          CLOUDRON_APP: ${{ secrets.CLOUDRON_APP }}
+        run: script -qec 'cloudron --server "$CLOUDRON_SERVER" exec --app "$CLOUDRON_APP" -- /app/data/deploy.sh' /dev/null
