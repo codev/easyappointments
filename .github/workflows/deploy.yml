@@ -12,11 +12,26 @@ jobs:
       - name: Install Cloudron CLI
         run: npm i -g cloudron
 
+      - name: Preflight
+        env:
+          CLOUDRON_TOKEN: ${{ secrets.CLOUDRON_TOKEN }}
+          CLOUDRON_SERVER: ${{ secrets.CLOUDRON_SERVER }}
+        run: |
+          node --version
+          cloudron --version
+          curl -sS -o /dev/null -w 'auth check: HTTP %{http_code}\n' "https://$CLOUDRON_SERVER/api/v1/profile?access_token=$CLOUDRON_TOKEN"
+
       # script(1) gives the CLI a pty: its error messages are otherwise lost
-      # (it process.exit()s before piped stdout flushes)
+      # (it process.exit()s before piped stdout flushes). Session is captured
+      # to deploy.log and printed even on failure.
       - name: Run deploy script
         env:
           CLOUDRON_CLI_AUTH_TOKEN: ${{ secrets.CLOUDRON_TOKEN }}
           CLOUDRON_SERVER: ${{ secrets.CLOUDRON_SERVER }}
           CLOUDRON_APP: ${{ secrets.CLOUDRON_APP }}
-        run: script -qec 'cloudron --server "$CLOUDRON_SERVER" exec --app "$CLOUDRON_APP" -- /app/data/deploy.sh' /dev/null
+        run: |
+          rc=0
+          script -qec 'cloudron --server "$CLOUDRON_SERVER" exec --app "$CLOUDRON_APP" -- /app/data/deploy.sh' deploy.log || rc=$?
+          echo "--- session log ---"
+          cat deploy.log
+          exit $rc
