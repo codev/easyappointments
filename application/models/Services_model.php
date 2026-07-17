@@ -318,7 +318,7 @@ class Services_model extends EA_Model
         $services = $this->db
             ->distinct()
             ->select(
-                'services.*, service_categories.name AS service_category_name, service_categories.id AS service_category_id',
+                'services.*, service_categories.name AS service_category_name, service_categories.id AS service_category_id, service_categories.description AS service_category_description',
             )
             ->from('services')
             ->join('services_providers', 'services_providers.id_services = services.id', 'inner')

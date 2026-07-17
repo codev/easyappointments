@@ -574,4 +574,8 @@ $lang['about_app_premium'] = 'We offer end-to-end services for self-hosted softw
 $lang['go_premium'] = 'Go Premium';
 $lang['notify_users_on_create_question'] = 'Would you like to send out a notification about this change?';
 $lang['notify_users_on_delete_question'] = 'Would you like to send out a notification about this change?';
+// Open Out additions
+$lang['other'] = 'Other';
+$lang['full_name'] = 'Full Name';
+$lang['phone_or_email_required'] = 'Please provide a phone number or an email address (or both).';
 // End

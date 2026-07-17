@@ -177,6 +177,7 @@ class Booking extends EA_Controller
         $require_email = setting('require_email');
         $display_phone_number = setting('display_phone_number');
         $require_phone_number = setting('require_phone_number');
+        $require_phone_or_email = setting('require_phone_or_email');
         $display_address = setting('display_address');
         $require_address = setting('require_address');
         $display_city = setting('display_city');
@@ -309,6 +310,7 @@ class Booking extends EA_Controller
             'customer_token' => $customer_token,
             'default_language' => setting('default_language'),
             'default_timezone' => setting('default_timezone'),
+            'require_phone_or_email' => $require_phone_or_email,
         ]);
 
         html_vars([
@@ -329,6 +331,7 @@ class Booking extends EA_Controller
             'require_email' => $require_email,
             'display_phone_number' => $display_phone_number,
             'require_phone_number' => $require_phone_number,
+            'require_phone_or_email' => $require_phone_or_email,
             'display_address' => $display_address,
             'require_address' => $require_address,
             'display_city' => $display_city,

@@ -26,33 +26,27 @@
 
         <h2 class="frame-title fw-light text-center mb-4 text-muted"><?= lang('customer_information') ?></h2>
 
+        <div id="form-message" class="text-danger text-center mb-3"></div>
+
         <div class="row frame-content">
             <div class="col-12 col-lg-6 field-col mx-auto">
-                <?php if ($display_first_name): ?>
+                <?php if ($display_first_name || $display_last_name): ?>
+                    <!-- Single full-name input; JS splits it into the hidden first/last fields. -->
                     <div class="mb-3">
-                        <label for="first-name" class="form-label">
-                            <?= lang('first_name') ?>
-                            <?php if ($require_first_name): ?>
+                        <label for="full-name" class="form-label">
+                            <?= lang('full_name') ?>
+                            <?php if ($require_first_name || $require_last_name): ?>
                                 <span class="text-danger">*</span>
                             <?php endif; ?>
                         </label>
-                        <input type="text" id="first-name"
-                               class="<?= $require_first_name ? 'required' : '' ?> form-control" maxlength="100"/>
+                        <input type="text" id="full-name"
+                               class="<?= $require_first_name || $require_last_name
+                                   ? 'required'
+                                   : '' ?> form-control" maxlength="220"/>
                     </div>
                 <?php endif; ?>
-
-                <?php if ($display_last_name): ?>
-                    <div class="mb-3">
-                        <label for="last-name" class="form-label">
-                            <?= lang('last_name') ?>
-                            <?php if ($require_last_name): ?>
-                                <span class="text-danger">*</span>
-                            <?php endif; ?>
-                        </label>
-                        <input type="text" id="last-name"
-                               class="<?= $require_last_name ? 'required' : '' ?> form-control" maxlength="120"/>
-                    </div>
-                <?php endif; ?>
+                <input type="hidden" id="first-name" maxlength="100"/>
+                <input type="hidden" id="last-name" maxlength="120"/>
 
                 <?php if ($display_email): ?>
                     <div class="mb-3">
@@ -77,6 +71,11 @@
                         </label>
                         <input type="text" id="phone-number" maxlength="60"
                                class="<?= $require_phone_number ? 'required' : '' ?> form-control"/>
+                        <?php if (vars('require_phone_or_email') && !$require_email && !$require_phone_number): ?>
+                            <div class="form-text text-muted small">
+                                <?= lang('phone_or_email_required') ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
 

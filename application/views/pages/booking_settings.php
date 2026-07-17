@@ -136,6 +136,17 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="form-group mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                               id="require-phone-or-email"
+                                               data-field="require_phone_or_email">
+                                        <label class="form-check-label" for="require-phone-or-email">
+                                            <?= lang('phone_or_email_required') ?>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-lg-6">

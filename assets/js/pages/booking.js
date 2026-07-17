@@ -23,6 +23,7 @@ App.Pages.Booking = (function () {
     const $selectTimezone = $('#select-timezone');
     const $firstName = $('#first-name');
     const $lastName = $('#last-name');
+    const $fullName = $('#full-name');
     const $email = $('#email');
     const $phoneNumber = $('#phone-number');
     const $address = $('#address');
@@ -270,6 +271,8 @@ App.Pages.Booking = (function () {
 
             // Initialize remember me after prefilling from query params
             initializeRememberMe();
+
+            syncFullNameFromParts();
         }
     }
 
@@ -405,6 +408,65 @@ App.Pages.Booking = (function () {
             App.Pages.Booking.updateConfirmFrame();
 
             App.Pages.Booking.updateServiceDescription(serviceId);
+
+            syncServiceCards(serviceId);
+        });
+
+        /**
+         * Event: Category Card "Clicked"
+         *
+         * Reveal the category's services; drop the current selection if it belongs to another category.
+         */
+        $(document).on('click keydown', '#service-category-cards .category-card', (event) => {
+            if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+                return;
+            }
+
+            event.preventDefault();
+
+            const $card = $(event.currentTarget);
+            const categoryId = String($card.data('category-id'));
+
+            $('#service-category-cards .category-card').removeClass('selected');
+            $card.addClass('selected');
+
+            $('#category-services').prop('hidden', false);
+
+            $('.category-service').each((index, serviceEl) => {
+                $(serviceEl).prop('hidden', String($(serviceEl).data('category-id')) !== categoryId);
+            });
+
+            const $active = $('.category-service.active');
+
+            if ($active.length && String($active.data('category-id')) !== categoryId) {
+                $('.category-service').removeClass('active');
+                $selectService.val('').trigger('change');
+            }
+        });
+
+        /**
+         * Event: Category Service "Clicked"
+         */
+        $(document).on('click', '.category-service', (event) => {
+            const $button = $(event.currentTarget);
+
+            $('.category-service').removeClass('active');
+            $button.addClass('active');
+
+            $selectService.val($button.data('service-id')).trigger('change');
+        });
+
+        /**
+         * Event: Full Name "Changed"
+         *
+         * Split the visible full name into the hidden first/last fields (single token copies to last).
+         */
+        $fullName.on('input', () => {
+            const parts = $fullName.val().trim().split(/\s+/).filter(Boolean);
+            const firstName = parts.shift() || '';
+
+            $firstName.val(firstName);
+            $lastName.val(parts.join(' ') || firstName);
         });
 
         /**
@@ -638,6 +700,44 @@ App.Pages.Booking = (function () {
     }
 
     /**
+     * Reflect a programmatic service selection (URL param, manage mode, single service) in the category cards.
+     */
+    function syncServiceCards(serviceId) {
+        const $button = $('.category-service[data-service-id="' + serviceId + '"]');
+
+        if (!$button.length || $button.hasClass('active')) {
+            return;
+        }
+
+        const categoryId = String($button.data('category-id'));
+
+        $('.category-service')
+            .removeClass('active')
+            .each((index, serviceEl) => {
+                $(serviceEl).prop('hidden', String($(serviceEl).data('category-id')) !== categoryId);
+            });
+
+        $button.addClass('active');
+
+        $('#service-category-cards .category-card')
+            .removeClass('selected')
+            .filter('[data-category-id="' + categoryId + '"]')
+            .addClass('selected');
+
+        $('#category-services').prop('hidden', false);
+    }
+
+    /**
+     * Fill the visible full-name field from the hidden first/last fields.
+     */
+    function syncFullNameFromParts() {
+        const firstName = $firstName.val() || '';
+        const lastName = $lastName.val() || '';
+
+        $fullName.val(lastName === firstName ? firstName : `${firstName} ${lastName}`.trim());
+    }
+
+    /**
      * This function validates the customer's data input. The user cannot continue without passing all the validation
      * checks.
      *
@@ -646,6 +746,7 @@ App.Pages.Booking = (function () {
     function validateCustomerForm() {
         $('#wizard-frame-3 .is-invalid').removeClass('is-invalid');
         $('#wizard-frame-3 label.text-danger').removeClass('text-danger');
+        $('#form-message').text('');
 
         // Validate required fields.
         let missingRequiredField = false;
@@ -659,6 +760,14 @@ App.Pages.Booking = (function () {
 
         if (missingRequiredField) {
             $('#form-message').text(lang('fields_are_required'));
+            return false;
+        }
+
+        // Require at least one contact channel.
+        if (Number(vars('require_phone_or_email')) && !$email.val() && !$phoneNumber.val()) {
+            $email.addClass('is-invalid');
+            $phoneNumber.addClass('is-invalid');
+            $('#form-message').text(lang('phone_or_email_required'));
             return false;
         }
 
@@ -923,6 +1032,8 @@ App.Pages.Booking = (function () {
             $customField3.val(customer.custom_field_3);
             $customField4.val(customer.custom_field_4);
             $customField5.val(customer.custom_field_5);
+
+            syncFullNameFromParts();
 
             App.Pages.Booking.updateConfirmFrame();
 

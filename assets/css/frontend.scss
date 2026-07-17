@@ -80,3 +80,36 @@
 #book-appointment-wizard .flatpickr-calendar.inline {
     margin: auto; 
 }
+
+/* Service category cards (Open Out) */
+#service-category-cards .category-card {
+    cursor: pointer;
+    transition: border-color 0.15s linear, box-shadow 0.15s linear;
+    border-width: 2px;
+}
+
+#service-category-cards .category-card:hover,
+#service-category-cards .category-card:focus-visible {
+    border-color: var(--bs-primary, #429a82);
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+}
+
+#service-category-cards .category-card.selected {
+    border-color: var(--bs-primary, #429a82);
+    box-shadow: 0 0 0 1px var(--bs-primary, #429a82);
+}
+
+#service-category-cards .category-card .card-img-top {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+#category-services .category-service.active {
+    background-color: var(--bs-primary, #429a82);
+    border-color: var(--bs-primary, #429a82);
+    color: #fff;
+}
+
+#category-services .category-service.active .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}

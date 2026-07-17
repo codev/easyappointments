@@ -116,6 +116,12 @@ class Customers_model extends EA_Model
             throw new InvalidArgumentException('Not all required fields are provided: ' . print_r($customer, true));
         }
 
+        $require_phone_or_email = filter_var(setting('require_phone_or_email'), FILTER_VALIDATE_BOOLEAN);
+
+        if ($require_phone_or_email && empty($customer['email']) && empty($customer['phone_number'])) {
+            throw new InvalidArgumentException('A phone number or an email address is required.');
+        }
+
         if (!empty($customer['email'])) {
             // Validate the email address.
             if (!filter_var($customer['email'], FILTER_VALIDATE_EMAIL)) {
